@@ -48,8 +48,14 @@ export function Intro({ onDone }: { onDone: () => void }) {
     if (calledRef.current) return;
     calledRef.current = true;
 
+    // Hand the hidden state over from the CSS flash guard to GSAP. This runs in
+    // the same tick as the initial `gsap.set` calls below, so nothing is ever
+    // painted half-revealed.
+    document.documentElement.classList.add("is-intro-live");
+
     const finish = () => {
       document.documentElement.classList.remove("is-intro");
+      document.documentElement.classList.remove("is-intro-live");
       onDone();
     };
 
@@ -221,6 +227,7 @@ export function Intro({ onDone }: { onDone: () => void }) {
 
     return () => {
       tl.kill();
+      document.documentElement.classList.remove("is-intro-live");
     };
   }, [onDone]);
 

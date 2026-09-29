@@ -159,6 +159,8 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
       clone.classList.add("page--snapshot");
       clone.setAttribute("aria-hidden", "true");
       clone.setAttribute("inert", "");
+      // querySelectorAll does not include the root, so strip it separately.
+      clone.removeAttribute("id");
       clone.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
       clone.style.position = "fixed";
       clone.style.top = "0";

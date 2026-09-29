@@ -1540,11 +1540,29 @@
 @layer components {
   /* Set on <html> by the inline bootstrap so nothing flashes before the
      timeline runs. The intro removes it when it finishes. */
+  /*
+     Pre-hydration flash guard. The class is added by the inline bootstrap in
+     layout.tsx and dropped the moment the intro effect runs, so these rules
+     only cover the gap between first paint and GSAP taking over. Hiding the
+     animated children (not the containers) keeps the intro visible while it
+     plays — hiding the containers would hide the whole animation.
+  */
   html.is-intro .header--intro .logo,
   html.is-intro .header--intro .svg,
   html.is-intro .header--intro .nav,
-  html.is-intro .header--intro .easter {
+  html.is-intro .header--intro .easter,
+  html.is-intro .img-wrap,
+  html.is-intro .gallery-item-info {
     visibility: hidden;
+  }
+
+  html.is-intro-live .header--intro .logo,
+  html.is-intro-live .header--intro .svg,
+  html.is-intro-live .header--intro .nav,
+  html.is-intro-live .header--intro .easter,
+  html.is-intro-live .img-wrap,
+  html.is-intro-live .gallery-item-info {
+    visibility: visible;
   }
 
   html.is-locked,
