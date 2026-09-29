@@ -19,6 +19,8 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
   const restoreRef = useRef<HTMLElement | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [values, setValues] = useState({ name: "", email: "", message: "" });
+  const [draft, setDraft] = useState("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -57,7 +59,11 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
   useEffect(() => {
     if (!open) {
       // Give the exit animation a moment before clearing the success state.
-      const t = window.setTimeout(() => setStatus("idle"), 400);
+      const t = window.setTimeout(() => {
+        setStatus("idle");
+        setDraft("");
+        setCopied(false);
+      }, 400);
       return () => window.clearTimeout(t);
     }
   }, [open]);
@@ -83,8 +89,26 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus("sending");
-    // No backend in this build — the success state stands in for a real send.
-    window.setTimeout(() => setStatus("done"), 650);
+
+    // No backend: hand the message to the visitor's mail client. The body is
+    // also kept on screen so the message survives a device with no mail app.
+    const body = [
+      `Name: ${values.name}`,
+      `Email: ${values.email}`,
+      "",
+      values.message,
+    ].join("\n");
+
+    const href =
+      `mailto:${site.email}` +
+      `?subject=${encodeURIComponent(`Project enquiry — ${values.name || "Website"}`)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    window.setTimeout(() => {
+      window.location.href = href;
+      setStatus("done");
+      setDraft(body);
+    }, 400);
   };
 
   if (status === "done") {
@@ -92,11 +116,34 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
       <div ref={rootRef} className="overlay success-overlay" role="status" aria-live="polite">
         <div className="inner">
           <p className="success-title font-headline-1" data-modal-item>
-            Thank you
+            Opening your mail app
           </p>
           <p className="success-body font-body-12" data-modal-item>
-            Your message is on its way. I usually reply within two working days.
+            Your message is ready to send to{" "}
+            <a href={`mailto:${site.email}`} className="underline">
+              {site.email}
+            </a>
+            . If nothing opened, copy it below.
           </p>
+          {draft ? (
+            <>
+              <pre className="success-draft font-body-12" data-modal-item tabIndex={0}>
+                {draft}
+              </pre>
+              <div data-modal-item>
+                <button
+                  type="button"
+                  className="link font-body-12 uppercase"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(draft);
+                    setCopied(true);
+                  }}
+                >
+                  <Rollover label={copied ? "Copied" : "Copy message"} />
+                </button>
+              </div>
+            </>
+          ) : null}
           <div data-modal-item>
             <button type="button" className="link font-body-12 uppercase" onClick={onClose}>
               <Rollover label="Close" />
@@ -125,7 +172,8 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
             </span>
           </h2>
           <p className="modal-body font-body-12" data-modal-item>
-            Tell me about the project, the timeline and the budget. Or email me directly at{" "}
+            Tell me about the project, the timeline and the budget. This opens your mail app — or write
+            to me directly at{" "}
             <a href={`mailto:${site.email}`} className="underline">
               {site.email}
             </a>
@@ -169,7 +217,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
 
           <div className="modal-actions" data-modal-item>
             <button type="submit" className="link font-body-12 uppercase" disabled={status === "sending"}>
-              <Rollover label={status === "sending" ? "Sending" : "Send"} />
+              <Rollover label={status === "sending" ? "Opening" : "Compose email"} />
             </button>
             <button type="button" className="link font-body-12 uppercase" onClick={onClose}>
               <Rollover label="Close" />

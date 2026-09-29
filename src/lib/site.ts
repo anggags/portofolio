@@ -1,10 +1,41 @@
 /* ---------------------------------------------------------------------------
    All site content. Edit this file to make the site yours.
 
+   Deployment-specific values come from the environment so the same build can
+   ship to a preview and to production. Each one falls back to the placeholder
+   below, so `npm run dev` works with no `.env` at all.
+
+     NEXT_PUBLIC_SITE_URL   canonical origin, used for metadata + absolute urls
+     NEXT_PUBLIC_CONTACT_EMAIL   where the contact form is addressed
+     NEXT_PUBLIC_SOCIAL_GITHUB
+     NEXT_PUBLIC_SOCIAL_LINKEDIN
+
    Project artwork is placeholder: each case carries a `tone` pair that the
    gallery turns into a gradient, so the layout and motion can be judged without
    shipping third-party imagery.
 --------------------------------------------------------------------------- */
+
+const env = (key: string, fallback: string) => {
+  const value = process.env[key];
+  return value && value.trim() ? value.trim() : fallback;
+};
+
+export const site = {
+  firstName: "Angga",
+  lastName: "S",
+  role: "Full-stack Engineer & Interface Designer",
+  timezone: "Asia/Jakarta",
+  /** Canonical origin. Falls back to the placeholder until NEXT_PUBLIC_SITE_URL is set. */
+  url: env("NEXT_PUBLIC_SITE_URL", "https://example.com"),
+  email: env("NEXT_PUBLIC_CONTACT_EMAIL", "hello@angga.dev"),
+  description:
+    "Brand, digital and product work — interfaces that stay fast and legible as they grow. Currently building design systems and frontend architecture.",
+  socials: [
+    { label: "Email", href: `mailto:${env("NEXT_PUBLIC_CONTACT_EMAIL", "hello@angga.dev")}` },
+    { label: "GitHub", href: env("NEXT_PUBLIC_SOCIAL_GITHUB", "https://github.com/anggags") },
+    { label: "LinkedIn", href: env("NEXT_PUBLIC_SOCIAL_LINKEDIN", "https://www.linkedin.com") },
+  ],
+};
 
 export type Project = {
   slug: string;
@@ -16,21 +47,6 @@ export type Project = {
   body: string[];
   /** gradient stops for the placeholder artwork */
   tone: [string, string];
-};
-
-export const site = {
-  firstName: "Angga",
-  lastName: "S",
-  role: "Full-stack Engineer & Interface Designer",
-  timezone: "Asia/Jakarta",
-  email: "hello@angga.dev",
-  description:
-    "Brand, digital and product work — interfaces that stay fast and legible as they grow. Currently building design systems and frontend architecture.",
-  socials: [
-    { label: "Email", href: "mailto:hello@angga.dev" },
-    { label: "GitHub", href: "https://github.com/anggags" },
-    { label: "LinkedIn", href: "https://www.linkedin.com" },
-  ],
 };
 
 export const navLinks = [
