@@ -3,6 +3,8 @@
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
 import { useCallback, useLayoutEffect, useRef } from "react";
+import Link from "next/link";
+import { Rollover } from "@/components/rollover";
 import type { Project } from "@/lib/site";
 
 gsap.registerPlugin(Draggable);
@@ -29,7 +31,7 @@ function writeX(instance: Draggable, value: number) {
   instance.update();
 }
 
-export function WorkGallery({ projects }: { projects: Project[] }) {
+export function Gallery({ projects }: { projects: Project[] }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
@@ -112,7 +114,7 @@ export function WorkGallery({ projects }: { projects: Project[] }) {
     const current = draggableRef.current;
     if (!current) return;
 
-    const step = 240;
+    const step = Math.round(window.innerWidth * 0.4);
     if (event.key === "ArrowRight") {
       event.preventDefault();
       writeX(current, Math.min(0, readX(current) - step));
@@ -121,62 +123,62 @@ export function WorkGallery({ projects }: { projects: Project[] }) {
       event.preventDefault();
       writeX(current, Math.min(0, readX(current) + step));
     }
+    if (event.key === "Home") {
+      event.preventDefault();
+      writeX(current, 0);
+    }
   };
 
   return (
-    <div className="col-span-6 md:col-span-11 md:col-start-1">
-      <div
-        ref={wrapRef}
-        data-lenis-prevent
-        className="overflow-hidden"
-      >
+    <div className="gallery">
+      <div ref={wrapRef} className="gallery-viewport" data-lenis-prevent>
         <div
           ref={trackRef}
+          className="gallery-items"
           role="region"
           aria-label="Selected work — drag horizontally or use arrow keys"
           tabIndex={0}
           onKeyDown={onKeyDown}
-          className="flex w-max touch-pan-y items-end gap-[0.8rem] outline-offset-4"
         >
           {projects.map((project, index) => (
-            <a
-              key={project.title}
-              href={project.href}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="group block w-[72vw] shrink-0 sm:w-[46vw] lg:w-[26vw]"
+            <Link
+              key={project.slug}
+              href={`/${project.slug}`}
+              className="gallery-item"
+              style={{ zIndex: projects.length - index }}
+              draggable={false}
             >
-              <div className="t-label mb-3 flex items-baseline justify-between gap-3 text-fg/70">
-                <span className="roll">
-                  <span>{project.title}</span>
-                  <span aria-hidden>{project.title}</span>
-                </span>
-                <span className="tabular-nums opacity-60">{String(index + 1).padStart(2, "0")}</span>
-              </div>
-
-              <div className="relative aspect-[396/496] overflow-hidden border border-fg/15">
+              <div className="img-wrap">
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${project.gradient} transition-transform duration-700 ease-[cubic-bezier(.87,0,.13,1)] group-hover:scale-105`}
-                />
-                <div
+                  className="artwork"
+                  style={
+                    {
+                      "--tone-a": project.tone[0],
+                      "--tone-b": project.tone[1],
+                    } as React.CSSProperties
+                  }
                   aria-hidden
-                  className="absolute inset-0 opacity-70 [background-image:linear-gradient(to_right,color-mix(in_oklab,var(--fg)_12%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--fg)_12%,transparent)_1px,transparent_1px)] [background-size:2.4rem_2.4rem]"
                 />
-                <span className="t-big absolute bottom-3 left-3 text-fg/25 transition-colors duration-500 group-hover:text-fg/45">
-                  {project.year}
-                </span>
+                {/* Overlay strength is driven by --img-over-opacity, so the
+                    artwork darkens and lightens with the time of day. */}
+                <div className="img-over" aria-hidden />
               </div>
-            </a>
+              <div className="gallery-item-info">
+                <span className="index tabular">{String(index + 1).padStart(2, "0")}</span>
+                <span className="name font-headline-2">
+                  <Rollover label={project.name} />
+                </span>
+                <span className="year tabular">{project.year}</span>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
 
-      {/* drag progress */}
-      <div className="mt-6">
-        <div className="h-px w-full bg-fg/20">
-          <div ref={fillRef} className="h-px w-full origin-left scale-x-1 bg-fg" />
+      <div className="progress" aria-hidden>
+        <div className="progress-track">
+          <div ref={fillRef} className="progress-fill" />
         </div>
-        <p className="t-label mt-3 text-fg/50">Drag or use arrow keys</p>
       </div>
     </div>
   );

@@ -1,82 +1,69 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Clock } from "@/components/clock";
-import { navLinks, site } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Rollover } from "@/components/rollover";
+import { TimeWidget } from "@/components/time-widget";
+import { site } from "@/lib/site";
 
-/** Two stacked copies of the label; the second rolls up on hover. */
-function Rollover({ label, className }: { label: string; className?: string }) {
-  return (
-    <span className={cn("roll", className)}>
-      <span>{label}</span>
-      <span aria-hidden>{label}</span>
-    </span>
-  );
-}
+type SiteHeaderProps = {
+  intro: boolean;
+  onMenu: () => void;
+  onContact: () => void;
+  menuOpen: boolean;
+};
 
-export function SiteHeader() {
-  const [offset, setOffset] = useState(0);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
+export function SiteHeader({ intro, onMenu, onContact, menuOpen }: SiteHeaderProps) {
   return (
     <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
-        scrolled ? "bg-bg/85 backdrop-blur-sm" : "bg-bg",
-      )}
+      className={`header font-body-12 uppercase${intro ? " header--intro" : ""}`}
+      data-site-header
     >
-      <div className="shell">
-        <div className="grid items-center py-4">
-          {/* logo */}
-          <a
-            href="#top"
-            aria-label={`${site.name} — top`}
-            className="t-label col-span-3 flex flex-col leading-[0.95] font-medium tracking-tight uppercase"
-          >
+      <div className="cont">
+        <div className="logo-wrapper">
+          <Link href="/" className="logo" aria-label={`${site.firstName} ${site.lastName} — home`}>
             <Rollover label={site.firstName} />
             <Rollover label={site.lastName} />
-          </a>
+          </Link>
+        </div>
 
-          {/* nav */}
-          <nav aria-label="Primary" className="col-span-3 hidden md:col-span-2 md:col-start-9 md:block">
-            <ul className="flex flex-col items-start gap-0.5">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <a href={link.href} className="t-label block text-fg/70 hover:text-fg">
-                    <Rollover label={link.label} />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        {/* Three strokes so the intro timeline can draw them in sequence. */}
+        <Link href="/" className="svg" aria-label="Home" data-mark>
+          <svg viewBox="0 0 101 51" fill="none" aria-hidden focusable="false">
+            <path d="M4 25.5H97" stroke="currentColor" strokeWidth="1" />
+            <path
+              d="M50.5 4.5A21 21 0 1 1 50.49 4.5"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+            <path d="M50.5 25.5V46.5" stroke="currentColor" strokeWidth="1" />
+          </svg>
+        </Link>
 
-          {/* clock */}
-          <div className="col-span-3 md:col-span-2 md:col-start-13">
-            <Clock timezone={site.timezone} offset={offset} onOffsetChange={setOffset} />
-          </div>
+        <nav className="nav" aria-label="Primary">
+          <ul className="links">
+            <li>
+              <button
+                type="button"
+                className="link font-body-12 uppercase"
+                onClick={onMenu}
+                aria-expanded={menuOpen}
+                aria-haspopup="dialog"
+              >
+                <Rollover label={menuOpen ? "Close" : "Menu"} />
+              </button>
+            </li>
+            <li className="contact-item">
+              <button type="button" className="link font-body-12 uppercase" onClick={onContact}>
+                <Rollover label="Contact" />
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="easter">
+          <TimeWidget timezone={site.timezone} />
         </div>
       </div>
-
-      {/* mobile nav */}
-      <nav aria-label="Mobile" className="shell md:hidden">
-        <ul className="flex flex-wrap gap-x-6 gap-y-1 border-t border-fg/15 py-3">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <a href={link.href} className="t-label text-fg/70 hover:text-fg">
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </header>
   );
 }
