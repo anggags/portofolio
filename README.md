@@ -30,6 +30,34 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Configuration
+
+Everything is optional — the site runs with no `.env` at all, falling back to
+the placeholder values in `src/lib/site.ts`. Copy `.env.example` to `.env.local`
+to override per environment:
+
+| Variable                       | Controls                                              |
+| ------------------------------ | ----------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`         | Canonical origin: `metadataBase`, `canonical`, `og:url` |
+| `NEXT_PUBLIC_CONTACT_EMAIL`    | Where the contact form is addressed                     |
+| `NEXT_PUBLIC_SOCIAL_GITHUB`    | GitHub link in the menu footer                         |
+| `NEXT_PUBLIC_SOCIAL_LINKEDIN`  | LinkedIn link in the menu footer                       |
+
+`NEXT_PUBLIC_*` values are inlined at build time, so set them in the build
+environment (Vercel, CI, etc.), not just in a local `.env.local`.
+
+Before deploying, replace the placeholder name, bio and project content in
+`src/lib/site.ts` — the six cases ship with gradient placeholder artwork
+generated from each project's `tone` pair, not real images.
+
+## Contact form
+
+There is no backend. Submitting composes a `mailto:` with the name, reply
+address and message prefilled, and keeps the composed text on screen with a
+copy button, so it still works on devices with no registered mail client. To
+send server-side instead, replace the handler in
+`src/components/contact-modal.tsx` with a route that posts to your provider.
+
 ## Scripts
 
 ```bash
