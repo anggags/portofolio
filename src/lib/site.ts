@@ -1,6 +1,8 @@
 export const site = {
   name: "Angga",
-  monogram: "AG",
+  firstName: "Angga",
+  lastName: "Pratama",
+  monogram: "AP",
   role: "Full-Stack Engineer",
   email: "hello@angga.dev",
   availability: "Available for work",
@@ -16,8 +18,8 @@ export const site = {
 } as const;
 
 export const navLinks = [
+  { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
   { label: "Experience", href: "#experience" },
   { label: "Contact", href: "#contact" },
 ] as const;
@@ -75,6 +77,26 @@ export const projects: Project[] = [
     repo: "https://github.com/anggags/orbit-docs",
     year: "2024",
     gradient: "from-sky-500/20 via-blue-500/10 to-transparent",
+  },
+  {
+    title: "Signal Relay",
+    description:
+      "Edge-deployed event fan-out with guaranteed ordering, replay tooling and a live inspector for every payload.",
+    tech: ["Rust", "WebSockets", "ClickHouse", "Fly.io"],
+    href: "https://example.com/signal",
+    repo: "https://github.com/anggags/signal-relay",
+    year: "2024",
+    gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
+  },
+  {
+    title: "Kiln",
+    description:
+      "Component playground that compiles snippets in the browser and renders them against your live design tokens.",
+    tech: ["TypeScript", "esbuild-wasm", "React", "Sandpack"],
+    href: "https://example.com/kiln",
+    repo: "https://github.com/anggags/kiln",
+    year: "2023",
+    gradient: "from-lime-500/20 via-green-500/10 to-transparent",
   },
 ];
 

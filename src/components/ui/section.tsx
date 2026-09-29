@@ -1,15 +1,26 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
-type SectionProps = ComponentProps<"section">;
-
-export function Section({ className, children, ...props }: SectionProps) {
+/** Big lowercase word that opens a section, matching the site title treatment. */
+export function PageTitle({ children, className }: { children: string; className?: string }) {
   return (
-    <section
-      className={cn("border-t border-border py-20 sm:py-28", className)}
-      {...props}
+    <h2
+      className={cn(
+        "t-display lower col-span-6 leading-none md:col-span-8 md:col-start-1",
+        className,
+      )}
     >
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">{children}</div>
+      {children}
+    </h2>
+  );
+}
+
+export function Section({ className, children, ...props }: ComponentProps<"section">) {
+  return (
+    <section className={cn("py-20 md:py-32", className)} {...props}>
+      <div className="shell">
+        <div className="grid">{children}</div>
+      </div>
     </section>
   );
 }

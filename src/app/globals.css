@@ -1,102 +1,57 @@
 @import "tailwindcss";
 
-/* Class-based dark mode driven by next-themes */
-@custom-variant dark (&:where(.dark, .dark *));
-
 /* ---------------------------------------------------------------------------
-   Design tokens
-   Dark values mirror the reference palette:
-   bg #09090b · surface #121215 · border #27272a · text #f4f4f5 · muted #a1a1aa
+   Tokens
+   --bg / --fg / --sel-bg are written to :root by the inline time script in
+   layout.tsx before first paint. Only the fallbacks below apply if JS is off.
 --------------------------------------------------------------------------- */
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
-  --surface: #fafafa;
-  --surface-strong: #f4f4f5;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-  --muted: #52525b;
-  --muted-foreground: #a1a1aa;
-  --accent: #09090b;
-  --accent-foreground: #fafafa;
-  --ring: #a1a1aa;
-  --grid-line: rgb(9 9 11 / 0.06);
-}
+  --bg: #f6f3ee;
+  --fg: #14110e;
+  --sel-bg: rgba(68, 48, 0, 0.2);
 
-.dark {
-  --background: #09090b;
-  --foreground: #f4f4f5;
-  --surface: #121215;
-  --surface-strong: #18181b;
-  --border: #27272a;
-  --border-strong: #3f3f46;
-  --muted: #a1a1aa;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #09090b;
-  --ring: #52525b;
-  --grid-line: rgb(244 244 245 / 0.05);
+  /* warm overlay strength, also driven by time of day */
+  --veil: 0;
+  --ease-site: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-soft: cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface-strong: var(--surface-strong);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-ring: var(--ring);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  --radius-xs: 0.375rem;
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-full: 9999px;
 
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-
-  --animate-marquee: marquee 40s linear infinite;
-  --animate-fade-up: fade-up 0.7s var(--ease-out-expo) both;
-  --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
+  --animate-tick: tick 1s step-end infinite;
+  --animate-rise: rise 0.9s var(--ease-site) both;
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
+@keyframes tick {
+  0%,
   to {
-    transform: translateX(-50%);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
   }
 }
 
-@keyframes fade-up {
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(0.6em);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow: 0 0 0 0 rgb(34 197 94 / 0.5);
-  }
-  50% {
-    opacity: 0.65;
-    box-shadow: 0 0 0 6px rgb(34 197 94 / 0);
   }
 }
 
@@ -106,7 +61,7 @@
 
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: color-mix(in oklab, var(--fg) 18%, transparent);
   }
 
   html {
@@ -115,22 +70,37 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-sans);
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.3;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+  }
+
+  /* Warm veil that keeps large flat fields from looking dead at night. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 80% at 50% 0%,
+      transparent 40%,
+      color-mix(in oklab, var(--fg) calc(var(--veil) * 100%), transparent) 100%
+    );
   }
 
   ::selection {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
+    background-color: var(--sel-bg);
+    color: var(--fg);
   }
 
   :focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline: 2px solid var(--fg);
+    outline-offset: 3px;
   }
 
   /* Lenis */
@@ -143,35 +113,203 @@
     scroll-behavior: auto !important;
   }
 
-  .lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
-  }
-
   .lenis.lenis-stopped {
     overflow: hidden;
+  }
+
+  /* Nothing in this design is ever rounded except the two circular pieces. */
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    border-radius: 0;
   }
 }
 
 /* ---------------------------------------------------------------------------
-   Utilities
+   Grid — 14 columns desktop, 6 mobile, 0.8rem gutter, full bleed
 --------------------------------------------------------------------------- */
 
-@utility grid-lines {
-  background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
+@layer components {
+  .grid {
+    display: grid;
+    gap: 0.8rem;
+    grid-template-columns: repeat(6, 1fr);
+  }
 
-@utility text-balance-tight {
-  text-wrap: balance;
-}
+  .grid > * {
+    grid-column: 1 / -1;
+  }
 
-/* Anchor targets land below the fixed navbar */
-@media (prefers-reduced-motion: no-preference) {
-  :target {
-    scroll-margin-top: 6rem;
+  @media (min-width: 1025px) {
+    .grid {
+      grid-template-columns: repeat(14, 1fr);
+    }
+
+    .grid > * {
+      grid-column: span 14;
+    }
+  }
+
+  .shell {
+    padding-inline: 0.8rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 1.6rem;
+    }
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Typography scale
+   Mobile first, then 768 / 1025 / 1438, ending fluid in vw.
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .t-display {
+    /* Below ~423px the bare 5.4rem makes "experience" wider than the shell.
+       Measure the longest display word (4.508em) against the padded column and
+       shrink only when it would otherwise overflow. */
+    font-size: min(5.4rem, calc((100vw - 1.6rem) / 4.6));
+    line-height: 1.24;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+  }
+
+  .t-h2 {
+    font-size: 2.8rem;
+    line-height: 1.2;
+    font-weight: 250;
+    letter-spacing: 0;
+  }
+
+  .t-h3 {
+    font-size: 2.8rem;
+    line-height: 1.1;
+    font-weight: 250;
+  }
+
+  .t-lead {
+    font-size: 1.6rem;
+    line-height: 1.2;
+    font-weight: 250;
+    letter-spacing: -0.01em;
+  }
+
+  .t-body {
+    font-size: 1.6rem;
+    line-height: 1.3;
+  }
+
+  .t-label {
+    font-size: 1.2rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .t-big {
+    font-size: 2.4rem;
+    line-height: 0.9;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .uppercase {
+    text-transform: uppercase;
+  }
+
+  .lower {
+    text-transform: lowercase;
+  }
+
+  /* Editorial negative leading: pull stacked lines together. */
+  .tight > * + * {
+    margin-top: -0.06em;
+  }
+
+  .t-display.tight > * + *,
+  .t-h2.tight > * + *,
+  .t-big.tight > * + * {
+    margin-top: -0.17em;
+  }
+
+  @media (min-width: 1025px) {
+    .t-display {
+      font-size: 9rem;
+    }
+    .t-h2 {
+      font-size: 4.8rem;
+    }
+    .t-h3 {
+      font-size: 4rem;
+    }
+    .t-lead {
+      font-size: 2.4rem;
+    }
+    .t-big {
+      font-size: 4rem;
+    }
+  }
+
+  @media (min-width: 1438px) {
+    .t-display {
+      font-size: 6.26vw;
+    }
+    .t-h2 {
+      font-size: 3.34vw;
+    }
+    .t-h3 {
+      font-size: 2.78vw;
+    }
+    .t-lead {
+      font-size: 1.67vw;
+    }
+    .t-body {
+      font-size: 1.11vw;
+    }
+    .t-big {
+      font-size: 2.78vw;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Rollover text — duplicate span rolls up from behind a mask
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .roll {
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+
+  .roll > span {
+    display: block;
+    transition: transform 0.55s var(--ease-site);
+  }
+
+  .roll > span + span {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+  }
+
+  .roll:hover > span {
+    transform: translateY(-100%);
+  }
+
+  .roll:hover > span + span {
+    transform: translateY(-100%);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion preferences
+--------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -180,5 +318,10 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .roll:hover > span,
+  .roll:hover > span + span {
+    transform: none;
   }
 }

@@ -1,36 +1,30 @@
-import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
-import { Section } from "@/components/ui/section";
-import { SectionHeader } from "@/components/ui/section-header";
+import { PageTitle, Section } from "@/components/ui/section";
 import { skillGroups } from "@/lib/site";
 
 export function Skills() {
   return (
     <Section id="skills">
-      <SectionHeader
-        index="04"
-        title="Skills & arsenal"
-        description="The tools I reach for most, updated as the ecosystem shifts."
-      />
+      <PageTitle>toolkit</PageTitle>
 
-      <Reveal stagger={0.1} y={26} className="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
-        {skillGroups.map((group) => (
-          <div key={group.category} className="bg-surface p-6">
-            <h3 className="font-mono text-[11px] tracking-tight text-muted-foreground">
+      {skillGroups.map((group) => (
+        <div
+          key={group.category}
+          className="col-span-6 mt-10 border-t border-fg/15 py-5 md:col-span-14 md:mt-0 md:py-6"
+        >
+          <div className="grid items-baseline">
+            <h3 className="col-span-6 t-label text-fg/50 md:col-span-6 md:col-start-1">
               {group.category}
             </h3>
-            <ul className="mt-5 flex flex-wrap gap-1.5">
+            <ul className="col-span-6 mt-3 flex flex-wrap gap-x-6 gap-y-1 md:col-span-10 md:col-start-5 md:mt-0 md:justify-end">
               {group.items.map((item) => (
-                <li key={item}>
-                  <Badge size="sm" className="transition-colors duration-300 hover:border-border-strong hover:text-foreground">
-                    {item}
-                  </Badge>
+                <li key={item} className="t-label text-fg transition-opacity duration-300 hover:opacity-100">
+                  {item}
                 </li>
               ))}
             </ul>
           </div>
-        ))}
-      </Reveal>
+        </div>
+      ))}
     </Section>
   );
 }

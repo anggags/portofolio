@@ -1,6 +1,4 @@
-import { Reveal } from "@/components/ui/reveal";
-import { Section } from "@/components/ui/section";
-import { SectionHeader } from "@/components/ui/section-header";
+import { PageTitle, Section } from "@/components/ui/section";
 import { site } from "@/lib/site";
 
 const facts = [
@@ -10,44 +8,69 @@ const facts = [
   { label: "Focus", value: "Product engineering" },
 ];
 
+const disciplines = [
+  "01. Interface engineering",
+  "02. Design systems",
+  "03. Realtime data",
+  "04. Performance",
+  "05. Accessibility",
+  "06. Motion",
+];
+
 export function About() {
   return (
     <Section id="about">
-      <SectionHeader
-        index="01"
-        title="About"
-        description="A short version of the long version."
-      />
+      <PageTitle>about</PageTitle>
 
-      <div className="mt-12 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
-        <Reveal className="space-y-5 text-base leading-relaxed text-muted">
-          <p>
-            I&apos;ve spent the last six years building products on the web — mostly the
-            unglamorous parts that decide whether an interface feels fast, predictable and
-            genuinely pleasant to use.
-          </p>
-          <p>
-            I care about the whole arc: shaping a design system in Figma, encoding it as tokens,
-            wiring up the data layer, and then obsessively profiling what actually ships. Motion
-            is part of that — used to explain change, never to decorate it.
-          </p>
-          <p>
-            These days I&apos;m at <span className="text-foreground">Nimbus Labs</span>, leading
-            front-end for a realtime analytics product. Outside work I maintain a handful of open
-            source tools and write about rendering performance.
-          </p>
-        </Reveal>
+      <div className="col-span-6 mt-10 md:col-span-6 md:col-start-1 md:mt-16">
+        <p className="t-h2 tight">
+          <span>I build fast,</span>
+          <span>quiet interfaces</span>
+          <span>for the web</span>
+        </p>
+      </div>
 
-        <Reveal stagger={0.08} className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border self-start">
+      <div className="col-span-6 mt-10 md:col-span-5 md:col-start-9 md:mt-16">
+        <div className="flex flex-col gap-5">
+          <p className="t-body text-fg/75">
+            Six years of shipping products on the web — mostly the unglamorous parts that
+            decide whether an interface feels fast, predictable and pleasant to use.
+          </p>
+          <p className="t-body text-fg/75">
+            I care about the whole arc: shaping a design system in Figma, encoding it as
+            tokens, wiring the data layer, then obsessively profiling what actually ships.
+          </p>
+          <p className="t-body text-fg/75">
+            Currently leading front-end for a realtime analytics product at{" "}
+            <span className="text-fg">Nimbus Labs</span>.
+          </p>
+        </div>
+      </div>
+
+      <div className="col-span-6 mt-16 md:col-span-5 md:col-start-1 md:mt-28">
+        <h3 className="t-label mb-6 text-fg/50">What I do</h3>
+        <ol className="flex flex-col">
+          {disciplines.map((item) => (
+            <li
+              key={item}
+              className="t-label border-t border-fg/15 py-3 transition-colors duration-300 hover:text-fg/100"
+            >
+              {item}
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="col-span-6 mt-16 md:col-span-5 md:col-start-9 md:mt-28">
+        <h3 className="t-label mb-6 text-fg/50">Details</h3>
+        <dl className="flex flex-col">
           {facts.map((fact) => (
-            <div key={fact.label} className="bg-surface p-5">
-              <dt className="font-mono text-[11px] tracking-tight text-muted-foreground">
-                {fact.label}
-              </dt>
-              <dd className="mt-2 text-sm leading-snug font-medium">{fact.value}</dd>
+            <div key={fact.label} className="flex items-baseline justify-between gap-6 border-t border-fg/15 py-3">
+              <dt className="t-label text-fg/50">{fact.label}</dt>
+              <dd className="t-label text-fg">{fact.value}</dd>
             </div>
           ))}
-        </Reveal>
+        </dl>
       </div>
     </Section>
   );

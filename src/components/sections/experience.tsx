@@ -1,66 +1,46 @@
-import { Reveal } from "@/components/ui/reveal";
-import { Section } from "@/components/ui/section";
-import { SectionHeader } from "@/components/ui/section-header";
-import { TimelineLine } from "@/components/sections/timeline-line";
+import { PageTitle, Section } from "@/components/ui/section";
 import { experience } from "@/lib/site";
 
 export function Experience() {
   return (
     <Section id="experience">
-      <SectionHeader
-        index="03"
-        title="Experience"
-        description="Where I've worked and what I was responsible for."
-      />
+      <PageTitle>experience</PageTitle>
 
-      <div className="relative mt-12 pl-8 md:pl-12">
-        <TimelineLine />
-
-        <Reveal as="ol" stagger={0.14} y={28} className="flex flex-col gap-12">
-          {experience.map((role) => (
-            <li key={`${role.company}-${role.title}`} className="relative">
-              {/* Node */}
-              <span
-                aria-hidden
-                className={`absolute top-1.5 -left-8 flex size-4 items-center justify-center rounded-full border bg-background md:-left-12 ${
-                  role.current ? "border-foreground/40" : "border-border"
-                }`}
-              >
-                <span
-                  className={`size-1.5 rounded-full ${
-                    role.current ? "animate-pulse-dot bg-emerald-500" : "bg-border-strong"
-                  }`}
-                />
+      <div className="col-span-6 mt-10 flex flex-col md:col-span-14 md:mt-20">
+        {experience.map((role, index) => (
+          <article
+            key={`${role.company}-${role.title}`}
+            className="grid border-t border-fg/15 py-6 md:py-8"
+          >
+            <div className="col-span-6 md:col-span-1">
+              <span className="t-label text-fg/40 tabular-nums">
+                {String(index + 1).padStart(2, "0")}
               </span>
+            </div>
 
-              <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold tracking-tight">{role.title}</h3>
-                  <p className="mt-0.5 text-sm text-muted">
-                    {role.company}
-                    {role.current ? (
-                      <span className="ml-2 rounded-full border border-border px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
-                        Current
-                      </span>
-                    ) : null}
-                  </p>
-                </div>
-                <p className="shrink-0 font-mono text-xs whitespace-nowrap text-muted-foreground">
-                  {role.period} · {role.location}
-                </p>
-              </div>
+            <div className="col-span-6 mt-2 md:col-span-4 md:mt-0">
+              <h3 className="t-lead">{role.title}</h3>
+              <p className="t-label mt-2 text-fg/60">
+                {role.company}
+                {role.current ? <span className="ml-2 text-fg/40">— current</span> : null}
+              </p>
+            </div>
 
-              <ul className="mt-4 space-y-2.5">
-                {role.points.map((point) => (
-                  <li key={point} className="flex gap-3 text-sm leading-relaxed text-muted">
-                    <span aria-hidden className="mt-2 size-1 shrink-0 rounded-full bg-border-strong" />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </Reveal>
+            <div className="col-span-6 mt-2 md:col-span-2 md:mt-0">
+              <p className="t-label text-fg/50">{role.period}</p>
+              <p className="t-label mt-1 text-fg/40">{role.location}</p>
+            </div>
+
+            <ul className="col-span-6 mt-5 flex flex-col gap-2 md:col-span-6 md:col-start-9 md:mt-0">
+              {role.points.map((point) => (
+                <li key={point} className="t-body flex gap-3 text-fg/70">
+                  <span aria-hidden className="mt-[0.7em] size-[0.3rem] shrink-0 rounded-full bg-fg/40" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
       </div>
     </Section>
   );

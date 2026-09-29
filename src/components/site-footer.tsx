@@ -4,33 +4,32 @@ import { site } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2.5 font-medium tracking-tight">
-          <span className="flex size-8 items-center justify-center rounded-lg border border-border bg-surface font-mono text-xs">
-            {site.monogram}
-          </span>
-          {site.name}
-        </div>
+    <footer className="border-t border-fg/15 py-8">
+      <div className="shell">
+        <div className="grid items-center">
+          <p className="col-span-6 t-label text-fg/60 md:col-span-6">
+            &copy; {new Date().getFullYear()} {site.name}
+          </p>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <span className="size-1.5 animate-pulse-dot rounded-full bg-emerald-500" />
-            {site.location}
-            <span className="text-border-strong">/</span>
+          <p className="col-span-6 t-label mt-2 text-fg/40 md:col-span-4 md:col-start-5 md:mt-0">
             <LocalTime timezone={site.timezone} />
-          </span>
-          <span>&copy; {new Date().getFullYear()} {site.name}</span>
-          <span>Built with Next.js &amp; Tailwind</span>
-        </div>
+          </p>
 
-        <a
-          href="#top"
-          aria-label="Back to top"
-          className="group inline-flex size-9 items-center justify-center self-start rounded-full border border-border text-muted transition-colors hover:border-border-strong hover:text-foreground md:self-auto"
-        >
-          <ArrowUp className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
-        </a>
+          <p className="col-span-6 t-label mt-2 text-fg/40 md:col-span-6 md:col-start-9 md:mt-0">
+            {site.location}
+          </p>
+
+          <div className="col-span-6 mt-4 flex justify-end md:col-span-2 md:col-start-13 md:mt-0">
+            <a
+              href="#top"
+              aria-label="Back to top"
+              className="t-label inline-flex items-center gap-2 text-fg/60 transition-colors hover:text-fg"
+            >
+              Top
+              <ArrowUp className="size-3.5" />
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );

@@ -1,20 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import { site } from "@/lib/site";
+import { TIME_THEME_SCRIPT } from "@/lib/time-theme";
 
-const inter = Inter({
+const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-archivo",
   display: "swap",
 });
 
@@ -41,19 +35,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
-  ],
+  themeColor: "#f6f3ee",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${geistMono.variable}`}>
-      <body className="min-h-svh bg-background text-foreground antialiased">
-        <ThemeProvider>
-          <SmoothScroll>{children}</SmoothScroll>
-        </ThemeProvider>
+    <html lang="en" className={archivo.variable}>
+      <body>
+        {/* Runs before first paint so the time theme never flashes. */}
+        <script dangerouslySetInnerHTML={{ __html: TIME_THEME_SCRIPT }} />
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );
